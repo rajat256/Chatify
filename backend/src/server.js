@@ -1,7 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import authRouter from '../router/auth.route.js';
-import messageRouter from '../router/auth.message.js';
+import authRouter from './router/auth.route.js';
+import messageRouter from './router/auth.message.js';
+import connectDB from './db/db.js';
 import path from 'path';
 
 dotenv.config();
@@ -14,6 +15,7 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/messages', messageRouter);
+
 
 
 // Make ready for deployment
@@ -29,4 +31,5 @@ if (process.env.NODE_ENV === 'production') {
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    connectDB();
 });
