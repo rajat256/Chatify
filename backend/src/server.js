@@ -13,6 +13,7 @@ const app = express();
 const __dirname = path.resolve();
 
 app.use(express.json());
+ connectDB();
 app.use('/api/auth', authRouter);
 app.use('/api/messages', messageRouter);
 
@@ -31,5 +32,4 @@ if (process.env.NODE_ENV === 'production') {
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    connectDB();
 });

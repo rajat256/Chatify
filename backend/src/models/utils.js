@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const generateToken = (userId, res) => {
+    const { JWT_SECRET_KEY } = process.env;
+    if (!JWT_SECRET_KEY) {
+        throw new Error("JWT_SECRET_KEY is not defined in environment variables");
+    }
     const jwtToken = jwt.sign(
         { userId: userId },
         process.env.JWT_SECRET_KEY,
