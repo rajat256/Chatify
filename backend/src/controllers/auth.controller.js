@@ -75,4 +75,43 @@ const Signup = async (req, res) => {
 }
 
 
-export { Signup }
+const Login = async (req,res)=>{
+    try{
+        const {email,password} = req.body;
+        
+        const user = await User.findOne({email});
+
+        if(!user) {
+            return res.status(400).json({message:"User does not exist"});
+        }
+
+        const isPasswordMatch = await bcrypt.compare(password,user.password);
+
+        if(!isPasswordMatch){
+            return res.status(400).json({message:"Invalid credentials"});
+        }
+
+        generateToken(user._id,res);
+
+       return res.status(200).json({
+            message:"Login successful",
+            user:{
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                profilePicture: user.profilePicture
+            }
+        })
+    }
+    catch(err){
+          return res.status(500).json({message:"Internal server error"});
+    }
+}
+
+const Logout = (_, res) => {
+  res.cookie("token", "", { maxAge: 0 });
+  res.status(200).json({ message: "Logout successful" });
+};
+
+
+export { Signup,Login,Logout }

@@ -22,6 +22,4 @@ export const generateToken = (userId, res) => {
     });
 
     return jwtToken;
-
-
 }
