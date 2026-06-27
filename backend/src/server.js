@@ -4,6 +4,7 @@ import authRouter from './router/auth.route.js';
 import messageRouter from './router/auth.message.js';
 import connectDB from './db/db.js';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -13,7 +14,8 @@ const app = express();
 const __dirname = path.resolve();
 
 app.use(express.json());
- connectDB();
+app.use(cookieParser());
+connectDB();
 app.use('/api/auth', authRouter);
 app.use('/api/messages', messageRouter);
 

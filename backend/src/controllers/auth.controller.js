@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import {generateToken} from "../models/utils.js";
 import { sendWelcomeEmail } from "../emails/emailhandlers.js";
 import "dotenv/config";
+import cloudinary from "../models/cloudinary.js";
 
 
 const Signup = async (req, res) => {
@@ -69,6 +70,7 @@ const Signup = async (req, res) => {
         }
     }
     catch (err) {
+        console.error("Error during signup",err);
         console.log(err);
         res.status(500).json({ message: "Internal server error" });
     }
@@ -78,6 +80,10 @@ const Signup = async (req, res) => {
 const Login = async (req,res)=>{
     try{
         const {email,password} = req.body;
+
+        if(!email || !password) {
+            return res.status(400).json({message:"Please fill all the fields"});
+        }
         
         const user = await User.findOne({email});
 
@@ -113,5 +119,18 @@ const Logout = (_, res) => {
   res.status(200).json({ message: "Logout successful" });
 };
 
+const Updateprofile = async (req,res)=>{
+    try{
+        const {profilepic} = req.body;
+        if(!profilepic){
+            return res.status(400).json({message:"Profile picture is required"});
+        }
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).json({message:"Internal server error"});
+    }
+}
 
-export { Signup,Login,Logout }
+
+export { Signup,Login,Logout,Updateprofile }
