@@ -1,14 +1,19 @@
 import express from "express";
 import {Signup,Login,Logout,Updateprofile} from '../controllers/auth.controller.js';
 import { authenticateToken } from "../middleware/auth.middleware.js";
+import { arcjetProtection } from "../middleware/arcjet.middleware.js";
 
 const router = express.Router();
 
-router.post('/signup', Signup);
+router.get('/test', arcjetProtection, (req, res) => {
+    res.status(200).json({ message: "Arcjet protection test passed. You are not a bot!" });
+});
 
-router.post('/login',Login);
+router.post('/signup', arcjetProtection, Signup);
 
-router.post('/logout',Logout);
+router.post('/login', arcjetProtection, Login);
+
+router.post('/logout', arcjetProtection, Logout);
 
 router.put('/update-profile',authenticateToken, Updateprofile);
 

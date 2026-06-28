@@ -1,9 +1,9 @@
 import User from "../models/UserSchema.js";
 import bcrypt from "bcryptjs";
-import {generateToken} from "../models/utils.js";
+import {generateToken} from "../utils/utils.js";
 import { sendWelcomeEmail } from "../emails/emailhandlers.js";
 import "dotenv/config";
-import cloudinary from "../models/cloudinary.js";
+import cloudinary from "../lib/cloudinary.js";
 
 
 const Signup = async (req, res) => {
@@ -125,6 +125,21 @@ const Updateprofile = async (req,res)=>{
         if(!profilepic){
             return res.status(400).json({message:"Profile picture is required"});
         }
+        const UserId = req.user._id;
+
+        const uploadResponse = await cloudinary.uploader.upload(profilepic, {
+            public_id: `profile_${UserId}`
+        });
+
+        const updatedUser = await User.findByIdAndUpdate(UserId, {
+            profilePicture: uploadResponse.secure_url
+        }, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({message:"User not found"});
+        }
+
+        res.status(200).json({message:"Profile updated successfully", user: updatedUser});
     }
     catch(err){
         console.error(err);
