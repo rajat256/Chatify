@@ -2,16 +2,18 @@ import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node";
 import dotenv from "dotenv";
 dotenv.config();
 
+const arcjetMode = process.env.NODE_ENV === "production" ? "LIVE" : "DRY_RUN";
+
 const aj = arcjet({
   // Get your site key from https://app.arcjet.com and set it as an environment
   // variable rather than hard coding.
   key: process.env.ARCJET_KEY,
   rules: [
     // Shield protects your app from common attacks e.g. SQL injection
-    shield({ mode: "LIVE" }),
+    shield({ mode: arcjetMode }),
     // Create a bot detection rule
     detectBot({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
+      mode: arcjetMode, // Blocks in production, logs only during local development
       // Block all bots except the following
       allow: [
         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
@@ -23,8 +25,8 @@ const aj = arcjet({
     }),
     // Create a token bucket rate limit. Other algorithms are supported.
     slidingWindow({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-      max: 5, // Max requests allowed in the window
+      mode: arcjetMode, // Blocks in production, logs only during local development
+      max: 100, // Max requests allowed in the window
       interval: 60, // Window size in seconds
     }),
   ],
